@@ -317,13 +317,23 @@ function App() {
               </div>
             </>
           )}
-          <button onClick={()=>{
-            if (setupIdx < setupDays.length-1) setSetupIdx(i=>i+1);
-            else setSetupDone(true);
-          }} style={{ width:"100%", padding:13, borderRadius:12, border:"none",
-            background:C.accent, color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
-            {setupIdx < setupDays.length-1 ? "Next day →" : "Finish setup →"}
-          </button>
+          <div style={{ display:"flex", gap:8 }}>
+            {setupIdx > 0 && (
+              <button onClick={()=>setSetupIdx(i=>i-1)}
+                style={{ flex:1, padding:13, borderRadius:12,
+                  border:`1px solid ${C.border}`, background:C.card,
+                  color:C.muted2, fontSize:13, fontWeight:600, cursor:"pointer" }}>
+                ← Previous
+              </button>
+            )}
+            <button onClick={()=>{
+              if (setupIdx < setupDays.length-1) setSetupIdx(i=>i+1);
+              else setSetupDone(true);
+            }} style={{ flex:1, padding:13, borderRadius:12, border:"none",
+              background:C.accent, color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+              {setupIdx < setupDays.length-1 ? "Next day →" : "Finish setup →"}
+            </button>
+          </div>
         </div>
       </div>
     );
