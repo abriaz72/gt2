@@ -342,7 +342,6 @@ function App() {
                             fontSize:12, fontWeight:active?700:400,
                             cursor:"pointer", textAlign:"center" }}>
                           <div style={{ fontWeight:700 }}>{opt.label}</div>
-                          <div style={{ fontSize:9, marginTop:3, opacity:0.8 }}>{opt.desc}</div>
                         </button>
                       );
                     })}
@@ -661,7 +660,6 @@ function App() {
                                 fontSize:12, fontWeight:active?700:400,
                                 cursor:"pointer", textAlign:"center" }}>
                               <div style={{ fontWeight:700 }}>{opt.label}</div>
-                              <div style={{ fontSize:9, marginTop:3, opacity:0.8 }}>{opt.desc}</div>
                             </button>
                           );
                         })}
