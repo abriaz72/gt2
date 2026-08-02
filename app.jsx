@@ -278,7 +278,7 @@ function App() {
   // ── SETUP ─────────────────────────────────────────────────────────────────
   if (needsSetup && setupIdx < setupDays.length) {
     const sk   = setupDays[setupIdx];
-    const slog = logs[sk] || { gfd:false, cats:[], urge:false, triggers:[] };
+    const slog = logs[sk] || { gfd:false, cats:[], urge:false, triggers:[], quality:null };
     return (
       <div style={base.app}>
         <div style={base.header}>
@@ -291,16 +291,19 @@ function App() {
             <div style={{ height:4, background:C.accent, borderRadius:2,
               width:`${(setupIdx/setupDays.length)*100}%` }}/>
           </div>
-          <button onClick={()=>setGFD(sk)}
+
+          {/* Did I gamble? */}
+          <div style={base.label}>Did I gamble?</div>
+          <button onClick={()=>slog.gfd?clearGFD(sk):setGFD(sk)}
             style={{ width:"100%", padding:13, borderRadius:12,
               border:`2px solid ${slog.gfd?C.green:C.border}`,
               background:slog.gfd?C.greenDim:C.card, color:slog.gfd?C.green:C.muted2,
               fontSize:13, fontWeight:700, cursor:"pointer", marginBottom:10 }}>
             {slog.gfd ? "✓ Gambling-free day" : "Mark as gambling-free day"}
           </button>
+
           {!slog.gfd && (
             <>
-              <div style={base.label}>Categories</div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7, marginBottom:14 }}>
                 {CATEGORIES.map(cat => {
                   const active = slog.cats?.includes(cat.id);
@@ -315,8 +318,96 @@ function App() {
                   );
                 })}
               </div>
+
+              {slog.cats?.length > 0 && (
+                <>
+                  <div style={{ height:1, background:C.border, margin:"4px 0 14px" }}/>
+                  <div style={base.label}>How did it go?</div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:7, marginBottom:14 }}>
+                    {[
+                      { id:"pringles", label:"Pringles", desc:"Couldn't stop", col:C.red,   bg:"#450a0a" },
+                      { id:"nike",     label:"Nike",     desc:"Just did it",   col:C.amber, bg:C.amberDim },
+                      { id:"bloom",    label:"Bloom",    desc:"In control",    col:C.green, bg:C.greenDim },
+                    ].map(opt=>{
+                      const active = slog.quality === opt.id;
+                      return (
+                        <button key={opt.id}
+                          onClick={()=>setLogs(p=>({
+                            ...p, [sk]:{ ...p[sk]||{gfd:false,cats:[],urge:false,triggers:[]},
+                              quality: active ? null : opt.id }
+                          }))}
+                          style={{ padding:"10px 8px", borderRadius:10,
+                            border:`1px solid ${active?opt.col:C.border}`,
+                            background:active?opt.bg:C.card, color:active?opt.col:C.muted2,
+                            fontSize:12, fontWeight:active?700:400,
+                            cursor:"pointer", textAlign:"center" }}>
+                          <div style={{ fontWeight:700 }}>{opt.label}</div>
+                          <div style={{ fontSize:9, marginTop:3, opacity:0.8 }}>{opt.desc}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </>
           )}
+
+          {/* Did I feel like gambling? */}
+          <div style={{ height:1, background:C.border, margin:"4px 0 14px" }}/>
+          <div style={base.label}>Did I feel like gambling?</div>
+          <div style={{ display:"flex", gap:8, marginBottom:12 }}>
+            {[true,false].map(val=>(
+              <button key={String(val)} onClick={()=>setUrge(sk,val)}
+                style={{ flex:1, padding:11, borderRadius:10,
+                  border:`1px solid ${slog.urge===val?(val?C.purple:C.green):C.border}`,
+                  background:slog.urge===val?(val?C.purpleDim:C.greenDim):C.card,
+                  color:slog.urge===val?(val?C.purple:C.green):C.muted2,
+                  fontSize:12, fontWeight:slog.urge===val?700:400, cursor:"pointer" }}>
+                {val ? "Yes" : "No"}
+              </button>
+            ))}
+          </div>
+
+          {/* Triggers */}
+          {slog.urge && (
+            <>
+              <div style={base.label}>Triggers</div>
+              <div style={{ fontSize:10, color:C.muted, marginBottom:6,
+                textTransform:"uppercase", letterSpacing:"0.5px" }}>Emotional</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6, marginBottom:10 }}>
+                {TRIGGERS_EMOTIONAL.map(t=>{
+                  const active = slog.triggers?.includes(t.id);
+                  return (
+                    <button key={t.id} onClick={()=>toggleTrigger(sk,t.id)}
+                      style={{ padding:"9px 12px", borderRadius:9,
+                        border:`1px solid ${active?C.amber:C.border}`,
+                        background:active?C.amberDim:C.card, color:active?C.amber:C.muted2,
+                        fontSize:11, fontWeight:active?600:400, cursor:"pointer", textAlign:"left" }}>
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <div style={{ fontSize:10, color:C.muted, marginBottom:6,
+                textTransform:"uppercase", letterSpacing:"0.5px" }}>Gambling</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6, marginBottom:14 }}>
+                {TRIGGERS_GAMBLING.map(t=>{
+                  const active = slog.triggers?.includes(t.id);
+                  return (
+                    <button key={t.id} onClick={()=>toggleTrigger(sk,t.id)}
+                      style={{ padding:"9px 12px", borderRadius:9,
+                        border:`1px solid ${active?C.red:C.border}`,
+                        background:active?"#450a0a":C.card, color:active?C.red:C.muted2,
+                        fontSize:11, fontWeight:active?600:400, cursor:"pointer", textAlign:"left" }}>
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {/* Navigation */}
           <div style={{ display:"flex", gap:8 }}>
             {setupIdx > 0 && (
               <button onClick={()=>setSetupIdx(i=>i-1)}
