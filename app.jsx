@@ -15,6 +15,7 @@ const TRIGGERS_EMOTIONAL = [
   { id: "avoidance", label: "Avoidance"      },
   { id: "reward",    label: "Reward"         },
   { id: "family",    label: "Family stress"  },
+  { id: "escape",    label: "Escape"         },
 ];
 
 const TRIGGERS_GAMBLING = [
@@ -102,12 +103,16 @@ const NAV_ITEMS = [
   { id:"savings",   label:"Saved",     icon:"£" },
 ];
 
+const SETUP_KEY = "gamble_tracker_setup_done";
+
 function App() {
   const [logs, setLogs]             = useState(loadData);
   const [tab, setTab]               = useState("dashboard");
   const [trackDate, setTrackDate]   = useState(todayKey());
   const [histPeriod, setHistPeriod] = useState("weekly");
-  const [setupDone, setSetupDone]   = useState(false);
+  const [setupDone, setSetupDone]   = useState(() => {
+    try { return localStorage.getItem(SETUP_KEY) === "true"; } catch { return false; }
+  });
   const [setupIdx, setSetupIdx]     = useState(0);
 
   const TODAY      = todayKey();
@@ -418,7 +423,10 @@ function App() {
             )}
             <button onClick={()=>{
               if (setupIdx < setupDays.length-1) setSetupIdx(i=>i+1);
-              else setSetupDone(true);
+              else {
+                try { localStorage.setItem(SETUP_KEY, "true"); } catch {}
+                setSetupDone(true);
+              }
             }} style={{ flex:1, padding:13, borderRadius:12, border:"none",
               background:C.accent, color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
               {setupIdx < setupDays.length-1 ? "Next day →" : "Finish setup →"}
