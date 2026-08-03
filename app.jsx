@@ -16,12 +16,14 @@ const TRIGGERS_EMOTIONAL = [
   { id: "reward",    label: "Reward"         },
   { id: "family",    label: "Family stress"  },
   { id: "escape",    label: "Escape"         },
+  { id: "anger",     label: "Anger"          },
 ];
 
 const TRIGGERS_GAMBLING = [
   { id: "winitback", label: "Win it back"      },
   { id: "cracked",   label: "Cracked the code" },
   { id: "event",     label: "Event driven"     },
+  { id: "challenge", label: "Challenge"        },
 ];
 
 const START_DATE  = "2026-06-22";
