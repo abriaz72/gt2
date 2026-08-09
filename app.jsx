@@ -9,21 +9,25 @@ const CATEGORIES = [
 ];
 
 const TRIGGERS_EMOTIONAL = [
-  { id: "boredom",   label: "Boredom"        },
-  { id: "pointless", label: "Pointlessness"  },
-  { id: "critic",    label: "Inner critic"   },
-  { id: "avoidance", label: "Avoidance"      },
-  { id: "reward",    label: "Reward"         },
-  { id: "family",    label: "Family stress"  },
-  { id: "escape",    label: "Escape"         },
-  { id: "anger",     label: "Anger"          },
+  { id: "boredom",    label: "Boredom/Loneliness"    },
+  { id: "pointless",  label: "Pointlessness"         },
+  { id: "worthless",  label: "Worthlessness"         },
+  { id: "avoidance",  label: "Avoidance"             },
+  { id: "reward",     label: "Reward"                },
+  { id: "emotional",  label: "Emotional deprivation" },
+  { id: "escape",     label: "Escape"                },
+  { id: "anger",      label: "Anger"                 },
 ];
 
 const TRIGGERS_GAMBLING = [
-  { id: "winitback", label: "Win it back"      },
-  { id: "cracked",   label: "Cracked the code" },
-  { id: "event",     label: "Event driven"     },
-  { id: "challenge", label: "Challenge"        },
+  { id: "winitback",  label: "Win it back"     },
+  { id: "cracked",    label: "Cracked the code"},
+  { id: "event",      label: "Event driven"    },
+  { id: "challenge",  label: "Challenge"       },
+  { id: "thefix",     label: "The Fix"         },
+  { id: "easymoney",  label: "Easy money"      },
+  { id: "cashneed",   label: "Cash necessity"  },
+  { id: "proveit",    label: "Prove it/worth"  },
 ];
 
 const START_DATE  = "2026-06-22";
