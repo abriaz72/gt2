@@ -14,9 +14,9 @@ const TRIGGERS_EMOTIONAL = [
   { id: "worthless",  label: "Worthlessness"         },
   { id: "avoidance",  label: "Avoidance"             },
   { id: "reward",     label: "Reward"                },
-  { id: "emotional",  label: "Emotional deprivation" },
+  { id: "emotional",  label: "Emotional Deprivation" },
   { id: "escape",     label: "Escape"                },
-  { id: "anger",      label: "Anger"                 },
+  { id: "Anger/Frustration",      label: "Anger/Frustration"                 },
 ];
 
 const TRIGGERS_GAMBLING = [
