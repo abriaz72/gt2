@@ -613,8 +613,15 @@ function App() {
 
   // ── TRACK ─────────────────────────────────────────────────────────────────
   const TrackTab = () => {
-    const tlog = logs[trackDate] || { gfd:false, cats:[], urge:false, triggers:[] };
+    const tlog = logs[trackDate] || { gfd:false, cats:[], urge:false, triggers:[], notes:"" };
     const isFuture = trackDate > TODAY;
+    const [localNotes, setLocalNotes] = useState(tlog.notes||"");
+
+    useEffect(() => { setLocalNotes(tlog.notes||""); }, [trackDate]);
+
+    function saveNotes(val) {
+      setLogs(p=>({ ...p, [trackDate]:{ ...p[trackDate]||{gfd:false,cats:[],urge:true,triggers:[]}, notes:val } }));
+    }
     return (
       <>
         <div style={base.header}>
@@ -759,11 +766,9 @@ function App() {
                   <div style={base.label}>Notes</div>
                   <textarea
                     maxLength={500}
-                    value={tlog.notes||""}
-                    onChange={e=>setLogs(p=>({
-                      ...p, [trackDate]:{ ...p[trackDate]||{gfd:false,cats:[],urge:true,triggers:[]},
-                        notes: e.target.value }
-                    }))}
+                    value={localNotes}
+                    onChange={e=>setLocalNotes(e.target.value)}
+                    onBlur={e=>saveNotes(e.target.value)}
                     placeholder="Add any context or thoughts..."
                     style={{ width:"100%", minHeight:100, padding:"10px 12px",
                       background:C.card, border:`1px solid ${C.border}`, borderRadius:10,
@@ -771,7 +776,7 @@ function App() {
                       outline:"none", lineHeight:1.5 }}
                   />
                   <div style={{ fontSize:10, color:C.muted, textAlign:"right", marginTop:4 }}>
-                    {(tlog.notes||"").length} / 500
+                    {localNotes.length} / 500
                   </div>
                 </>
               )}
