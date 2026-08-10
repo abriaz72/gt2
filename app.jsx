@@ -14,9 +14,9 @@ const TRIGGERS_EMOTIONAL = [
   { id: "worthless",  label: "Worthlessness"         },
   { id: "avoidance",  label: "Avoidance"             },
   { id: "reward",     label: "Reward"                },
-  { id: "emotional",  label: "Emotional Deprivation" },
+  { id: "emotional",  label: "Emotional deprivation" },
   { id: "escape",     label: "Escape"                },
-  { id: "Anger/Frustration",      label: "Anger/Frustration"                 },
+  { id: "anger",      label: "Anger"                 },
 ];
 
 const TRIGGERS_GAMBLING = [
@@ -414,6 +414,26 @@ function App() {
                   );
                 })}
               </div>
+
+              {/* Notes */}
+              <div style={{ height:1, background:C.border, margin:"4px 0 14px" }}/>
+              <div style={base.label}>Notes</div>
+              <textarea
+                maxLength={500}
+                value={slog.notes||""}
+                onChange={e=>setLogs(p=>({
+                  ...p, [sk]:{ ...p[sk]||{gfd:false,cats:[],urge:true,triggers:[]},
+                    notes: e.target.value }
+                }))}
+                placeholder="Add any context or thoughts..."
+                style={{ width:"100%", minHeight:80, padding:"10px 12px",
+                  background:C.card, border:`1px solid ${C.border}`, borderRadius:10,
+                  color:C.text, fontSize:13, fontFamily:"inherit", resize:"vertical",
+                  outline:"none", lineHeight:1.5, marginBottom:4 }}
+              />
+              <div style={{ fontSize:10, color:C.muted, textAlign:"right", marginBottom:14 }}>
+                {(slog.notes||"").length} / 500
+              </div>
             </>
           )}
 
@@ -719,7 +739,7 @@ function App() {
                   </div>
                   <div style={{ fontSize:10, color:C.muted, marginBottom:6,
                     textTransform:"uppercase", letterSpacing:"0.5px" }}>Gambling</div>
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6, marginBottom:14 }}>
                     {TRIGGERS_GAMBLING.map(t=>{
                       const active = tlog.triggers?.includes(t.id);
                       return (
@@ -732,6 +752,26 @@ function App() {
                         </button>
                       );
                     })}
+                  </div>
+
+                  {/* Notes */}
+                  <div style={{ height:1, background:C.border, margin:"4px 0 14px" }}/>
+                  <div style={base.label}>Notes</div>
+                  <textarea
+                    maxLength={500}
+                    value={tlog.notes||""}
+                    onChange={e=>setLogs(p=>({
+                      ...p, [trackDate]:{ ...p[trackDate]||{gfd:false,cats:[],urge:true,triggers:[]},
+                        notes: e.target.value }
+                    }))}
+                    placeholder="Add any context or thoughts..."
+                    style={{ width:"100%", minHeight:100, padding:"10px 12px",
+                      background:C.card, border:`1px solid ${C.border}`, borderRadius:10,
+                      color:C.text, fontSize:13, fontFamily:"inherit", resize:"vertical",
+                      outline:"none", lineHeight:1.5 }}
+                  />
+                  <div style={{ fontSize:10, color:C.muted, textAlign:"right", marginTop:4 }}>
+                    {(tlog.notes||"").length} / 500
                   </div>
                 </>
               )}
