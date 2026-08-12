@@ -25,7 +25,7 @@ const TRIGGERS_GAMBLING = [
   { id: "event",      label: "Event driven"    },
   { id: "challenge",  label: "Challenge"       },
   { id: "thefix",     label: "The Fix"         },
-  { id: "easymoney",  label: "Easy money"      },
+  { id: "easymoney",  label: "We've come this far"      },
   { id: "cashneed",   label: "Cash necessity"  },
   { id: "proveit",    label: "Prove it/worth"  },
 ];
