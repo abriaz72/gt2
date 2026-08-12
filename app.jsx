@@ -16,7 +16,7 @@ const TRIGGERS_EMOTIONAL = [
   { id: "reward",     label: "Reward"                },
   { id: "emotional",  label: "Emotional deprivation" },
   { id: "escape",     label: "Escape"                },
-  { id: "anger",      label: "Anger"                 },
+  { id: "Anger/Frustration",      label: "Anger/Frustration"                 },
 ];
 
 const TRIGGERS_GAMBLING = [
