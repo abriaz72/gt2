@@ -16,7 +16,7 @@ const TRIGGERS_EMOTIONAL = [
   { id: "reward",     label: "Reward"                },
   { id: "emotional",  label: "Emotional deprivation" },
   { id: "escape",     label: "Escape"                },
-  { id: "Anger/Frustration",      label: "Anger/Frustration"                 },
+  { id: "anger",      label: "Anger"                 },
 ];
 
 const TRIGGERS_GAMBLING = [
@@ -25,7 +25,7 @@ const TRIGGERS_GAMBLING = [
   { id: "event",      label: "Event driven"    },
   { id: "challenge",  label: "Challenge"       },
   { id: "thefix",     label: "The Fix"         },
-  { id: "easymoney",  label: "We've come this far"      },
+  { id: "easymoney",  label: "Easy money"      },
   { id: "cashneed",   label: "Cash necessity"  },
   { id: "proveit",    label: "Prove it/worth"  },
 ];
@@ -130,7 +130,7 @@ function App() {
 
   const setupDays = [];
   { let d = START_DATE; while (d < TODAY) { setupDays.push(d); d = addDays(d,1); } }
-  const needsSetup = !setupDone && setupDays.some(k => logs[k] === undefined);
+  const needsSetup = !setupDone;
 
   function setGFD(dateStr) {
     setLogs(p => ({ ...p, [dateStr]: { ...p[dateStr], gfd:true, cats:[] } }));
@@ -633,9 +633,25 @@ function App() {
             style={{ background:"none", border:"none",
               color:trackDate<=START_DATE?C.border:C.muted2,
               fontSize:22, cursor:"pointer", padding:"2px 8px" }}>‹</button>
-          <div style={{ textAlign:"center" }}>
+          <div style={{ textAlign:"center", flex:1 }}>
             <div style={{ fontSize:14, fontWeight:600, color:C.text }}>{formatDisplay(trackDate)}</div>
             {trackDate===TODAY && <div style={{ fontSize:10, color:C.accent }}>Today</div>}
+            <input
+              type="date"
+              min={START_DATE}
+              max={TODAY}
+              value={trackDate}
+              onChange={e=>{ if(e.target.value) setTrackDate(e.target.value); }}
+              style={{ position:"absolute", opacity:0, width:0, height:0, pointerEvents:"none" }}
+              id="track-date-picker"
+            />
+            <button onClick={()=>document.getElementById("track-date-picker").showPicker?.() ||
+              document.getElementById("track-date-picker").click()}
+              style={{ background:"none", border:"none", color:C.muted, cursor:"pointer",
+                fontSize:11, marginTop:2, padding:"2px 6px", borderRadius:6,
+                border:`1px solid ${C.border}` }}>
+              📅 Pick date
+            </button>
           </div>
           <button onClick={()=>{ if(trackDate<TODAY) setTrackDate(addDays(trackDate,1)); }}
             style={{ background:"none", border:"none",
