@@ -1,4 +1,4 @@
-const { useState, useEffect } = React;
+    const { useState, useEffect } = React;
 
 const CATEGORIES = [
   { id: "ohf",  label: "Online Sports", dailyRate: 47.29 },
@@ -20,14 +20,14 @@ const TRIGGERS_EMOTIONAL = [
 ];
 
 const TRIGGERS_GAMBLING = [
-  { id: "winitback",  label: "Win it back"     },
-  { id: "cracked",    label: "Cracked the code"},
-  { id: "event",      label: "Event driven"    },
-  { id: "challenge",  label: "Challenge"       },
-  { id: "thefix",     label: "The Fix"         },
-  { id: "easymoney",  label: "Easy money"      },
-  { id: "cashneed",   label: "Cash necessity"  },
-  { id: "proveit",    label: "Prove it/worth"  },
+  { id: "winitback",  label: "Win it back"       },
+  { id: "cracked",    label: "Cracked the code"  },
+  { id: "event",      label: "Event driven"      },
+  { id: "challenge",  label: "Challenge"         },
+  { id: "thefix",     label: "Financial Fantasy" },
+  { id: "easymoney",  label: "Account Availability" },
+  { id: "cashneed",   label: "Cash is King"      },
+  { id: "proveit",    label: "Prove it/worth"    },
 ];
 
 const START_DATE  = "2026-06-22";
