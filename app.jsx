@@ -37,17 +37,17 @@ const STORAGE_KEY = "gamble_tracker_v2";
 const ACCOUNTS_KEY = "gamble_tracker_accounts_v1";
 
 const BOOKMAKERS = [
-  { id:"skybet",     label:"Skybet"     },
-  { id:"wh",         label:"WH"         },
-  { id:"sbk",        label:"SBK"        },
-  { id:"tote",       label:"Tote"       },
-  { id:"betfred",    label:"Betfred"    },
-  { id:"betfair",    label:"Betfair"    },
-  { id:"netbet",     label:"Netbet"     },
-  { id:"betgoodwin", label:"Betgoodwin" },
-  { id:"betvictor",  label:"Bet Victor" },
-  { id:"ak",         label:"AK"         },
-  { id:"boyles",     label:"Boyles"     },
+  { id:"betfair",    label:"Betfair"     },
+  { id:"wh",         label:"WH"          },
+  { id:"skybet",     label:"Skybet"      },
+  { id:"betvictor",  label:"Bet Victor"  },
+  { id:"tote",       label:"Tote"        },
+  { id:"boyles",     label:"Boyles"      },
+  { id:"ak",         label:"AK"          },
+  { id:"betfred",    label:"Betfred"     },
+  { id:"betgoodwin", label:"Betgoodwin"  },
+  { id:"netbet",     label:"Netbet"      },
+  { id:"sbk",        label:"SBK"         },
 ];
 
 function loadAccounts() {
