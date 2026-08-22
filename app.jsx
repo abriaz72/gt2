@@ -949,23 +949,22 @@ function App() {
 
   // ── ACCOUNTS ──────────────────────────────────────────────────────────────
   const AccountsTab = () => {
-    const [viewMonth, setViewMonth] = useState(startOfMonthKey(TODAY));
+    const [viewMonth, setViewMonth] = useState(startOfMonthKey(TODAY).slice(0,7));
     const [expandedBookie, setExpandedBookie] = useState(null);
 
-    // Build list of months from ACCOUNTS_START to today
     function getMonths() {
       const months = [];
-      let m = ACCOUNTS_START + "-01";
-      const end = startOfMonthKey(TODAY);
+      let m = ACCOUNTS_START;
+      const end = startOfMonthKey(TODAY).slice(0,7);
       while (m <= end) {
-        months.push(m.slice(0,7));
-        const d = parseDate(m); d.setMonth(d.getMonth()+1);
-        m = dateKey(d);
+        months.push(m);
+        const d = parseDate(m+"-01"); d.setMonth(d.getMonth()+1);
+        m = dateKey(d).slice(0,7);
       }
       return months;
     }
     const months = getMonths();
-    const isCurrentMonth = viewMonth === startOfMonthKey(TODAY);
+    const isCurrentMonth = viewMonth === startOfMonthKey(TODAY).slice(0,7);
 
     function getStatus(bookieId, monthKey) {
       return accounts[monthKey]?.[bookieId] || "green";
@@ -991,29 +990,22 @@ function App() {
     }
 
     function navigateMonth(dir) {
-      const d = parseDate(viewMonth + "-01");
-      d.setMonth(d.getMonth() + dir);
+      const d = parseDate(viewMonth+"-01");
+      d.setMonth(d.getMonth()+dir);
       const newM = dateKey(d).slice(0,7);
       if (newM >= ACCOUNTS_START && newM <= startOfMonthKey(TODAY).slice(0,7)) {
-        setViewMonth(dateKey(d).slice(0,7) + "-01");
-        // normalise to first of month
-        setViewMonth(p => {
-          const nd = parseDate(newM + "-01");
-          return dateKey(nd);
-        });
+        setViewMonth(newM);
       }
     }
 
-    const viewMonthKey = viewMonth.slice(0,7);
-    const monthLabel = parseDate(viewMonth).toLocaleDateString("en-GB", { month:"long", year:"numeric" });
+    const monthLabel = parseDate(viewMonth+"-01").toLocaleDateString("en-GB", { month:"long", year:"numeric" });
     const summary = { green:0, amber:0, red:0 };
-    BOOKMAKERS.forEach(b => { summary[getStatus(b.id, viewMonthKey)]++; });
+    BOOKMAKERS.forEach(b => { summary[getStatus(b.id, viewMonth)]++; });
 
     return (
       <>
         <div style={base.header}>
           <div style={base.hTitle}>Accounts</div>
-          <div style={base.hSub}>Monthly limit tracker</div>
         </div>
 
         {/* Month navigator */}
@@ -1028,7 +1020,7 @@ function App() {
           </div>
           <button onClick={()=>navigateMonth(1)}
             style={{ background:"none", border:"none",
-              color:viewMonthKey>=startOfMonthKey(TODAY).slice(0,7)?C.border:C.muted2,
+              color:viewMonth>=startOfMonthKey(TODAY).slice(0,7)?C.border:C.muted2,
               fontSize:22, cursor:"pointer", padding:"2px 8px" }}>›</button>
         </div>
 
@@ -1048,7 +1040,7 @@ function App() {
         <div style={{ padding:"12px 20px" }}>
           <div style={base.label}>Tap to update status</div>
           {BOOKMAKERS.map((b,i)=>{
-            const status = getStatus(b.id, viewMonthKey);
+            const status = getStatus(b.id, viewMonth);
             const col = statusColor(status);
             const isExpanded = expandedBookie === b.id;
             const bMonths = months.slice().reverse();
@@ -1059,16 +1051,14 @@ function App() {
                   background:C.card, border:`1px solid ${C.border}`,
                   borderRadius: isExpanded ? "10px 10px 0 0" : 10,
                   padding:"11px 14px" }}>
-                  {/* Status dot — tap to cycle */}
-                  <button onClick={()=>cycleStatus(b.id, viewMonthKey)}
-                    style={{ width:28, height:28, borderRadius:"50%", border:"none",
+                  <button onClick={()=>cycleStatus(b.id, viewMonth)}
+                    style={{ width:28, height:28, borderRadius:"50%",
                       background:statusBg(status), cursor:"pointer", flexShrink:0,
                       border:`2px solid ${col}` }}/>
                   <div style={{ flex:1 }}>
                     <div style={{ fontSize:13, fontWeight:600, color:C.text }}>{b.label}</div>
                     <div style={{ fontSize:10, color:col, marginTop:1 }}>{statusLabel(status)}</div>
                   </div>
-                  {/* History toggle */}
                   <button onClick={()=>setExpandedBookie(isExpanded ? null : b.id)}
                     style={{ background:"none", border:`1px solid ${C.border}`,
                       borderRadius:6, padding:"3px 8px", color:C.muted,
@@ -1077,7 +1067,6 @@ function App() {
                   </button>
                 </div>
 
-                {/* Expanded history */}
                 {isExpanded && (
                   <div style={{ background:C.surface, border:`1px solid ${C.border}`,
                     borderTop:"none", borderRadius:"0 0 10px 10px",
