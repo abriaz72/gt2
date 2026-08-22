@@ -1,4 +1,4 @@
-    const { useState, useEffect } = React;
+const { useState, useEffect } = React;
 
 const CATEGORIES = [
   { id: "ohf",  label: "Online Sports", dailyRate: 47.29 },
@@ -31,8 +31,30 @@ const TRIGGERS_GAMBLING = [
 ];
 
 const START_DATE  = "2026-06-22";
+const ACCOUNTS_START = "2026-07";
 const INITIAL_PB  = 30;
 const STORAGE_KEY = "gamble_tracker_v2";
+const ACCOUNTS_KEY = "gamble_tracker_accounts_v1";
+
+const BOOKMAKERS = [
+  { id:"skybet",     label:"Skybet"     },
+  { id:"wh",         label:"WH"         },
+  { id:"sbk",        label:"SBK"        },
+  { id:"tote",       label:"Tote"       },
+  { id:"betfred",    label:"Betfred"    },
+  { id:"betfair",    label:"Betfair"    },
+  { id:"netbet",     label:"Netbet"     },
+  { id:"betgoodwin", label:"Betgoodwin" },
+  { id:"betvictor",  label:"Bet Victor" },
+  { id:"ak",         label:"AK"         },
+  { id:"boyles",     label:"Boyles"     },
+];
+
+function loadAccounts() {
+  try { const r = localStorage.getItem(ACCOUNTS_KEY); return r ? JSON.parse(r) : {}; }
+  catch { return {}; }
+}
+function saveAccounts(d) { try { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(d)); } catch {} }
 
 function todayKey() {
   const d = new Date();
@@ -106,6 +128,7 @@ const NAV_ITEMS = [
   { id:"track",     label:"Track",     icon:"◎" },
   { id:"progress",  label:"Progress",  icon:"↗" },
   { id:"history",   label:"History",   icon:"⏱" },
+  { id:"accounts",  label:"Accounts",  icon:"🏦" },
   { id:"savings",   label:"Saved",     icon:"£" },
 ];
 
@@ -113,6 +136,7 @@ const SETUP_KEY = "gamble_tracker_setup_done";
 
 function App() {
   const [logs, setLogs]             = useState(loadData);
+  const [accounts, setAccounts]     = useState(loadAccounts);
   const [tab, setTab]               = useState("dashboard");
   const [trackDate, setTrackDate]   = useState(todayKey());
   const [histPeriod, setHistPeriod] = useState("weekly");
@@ -127,6 +151,7 @@ function App() {
   const yearStart  = startOfYearKey(TODAY);
 
   useEffect(() => { saveData(logs); }, [logs]);
+  useEffect(() => { saveAccounts(accounts); }, [accounts]);
 
   const setupDays = [];
   { let d = START_DATE; while (d < TODAY) { setupDays.push(d); d = addDays(d,1); } }
@@ -922,6 +947,169 @@ function App() {
     );
   };
 
+  // ── ACCOUNTS ──────────────────────────────────────────────────────────────
+  const AccountsTab = () => {
+    const [viewMonth, setViewMonth] = useState(startOfMonthKey(TODAY));
+    const [expandedBookie, setExpandedBookie] = useState(null);
+
+    // Build list of months from ACCOUNTS_START to today
+    function getMonths() {
+      const months = [];
+      let m = ACCOUNTS_START + "-01";
+      const end = startOfMonthKey(TODAY);
+      while (m <= end) {
+        months.push(m.slice(0,7));
+        const d = parseDate(m); d.setMonth(d.getMonth()+1);
+        m = dateKey(d);
+      }
+      return months;
+    }
+    const months = getMonths();
+    const isCurrentMonth = viewMonth === startOfMonthKey(TODAY);
+
+    function getStatus(bookieId, monthKey) {
+      return accounts[monthKey]?.[bookieId] || "green";
+    }
+
+    function cycleStatus(bookieId, monthKey) {
+      const current = getStatus(bookieId, monthKey);
+      const next = current === "green" ? "amber" : current === "amber" ? "red" : "green";
+      setAccounts(p => ({
+        ...p,
+        [monthKey]: { ...(p[monthKey]||{}), [bookieId]: next }
+      }));
+    }
+
+    function statusColor(s) {
+      return s === "green" ? C.green : s === "amber" ? C.amber : C.red;
+    }
+    function statusBg(s) {
+      return s === "green" ? C.greenDim : s === "amber" ? C.amberDim : "#450a0a";
+    }
+    function statusLabel(s) {
+      return s === "green" ? "Unused" : s === "amber" ? "Partial" : "Maxed";
+    }
+
+    function navigateMonth(dir) {
+      const d = parseDate(viewMonth + "-01");
+      d.setMonth(d.getMonth() + dir);
+      const newM = dateKey(d).slice(0,7);
+      if (newM >= ACCOUNTS_START && newM <= startOfMonthKey(TODAY).slice(0,7)) {
+        setViewMonth(dateKey(d).slice(0,7) + "-01");
+        // normalise to first of month
+        setViewMonth(p => {
+          const nd = parseDate(newM + "-01");
+          return dateKey(nd);
+        });
+      }
+    }
+
+    const viewMonthKey = viewMonth.slice(0,7);
+    const monthLabel = parseDate(viewMonth).toLocaleDateString("en-GB", { month:"long", year:"numeric" });
+    const summary = { green:0, amber:0, red:0 };
+    BOOKMAKERS.forEach(b => { summary[getStatus(b.id, viewMonthKey)]++; });
+
+    return (
+      <>
+        <div style={base.header}>
+          <div style={base.hTitle}>Accounts</div>
+          <div style={base.hSub}>Monthly limit tracker</div>
+        </div>
+
+        {/* Month navigator */}
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
+          background:C.surface, padding:"10px 20px", borderBottom:`1px solid ${C.border}` }}>
+          <button onClick={()=>navigateMonth(-1)}
+            style={{ background:"none", border:"none", color:C.muted2,
+              fontSize:22, cursor:"pointer", padding:"2px 8px" }}>‹</button>
+          <div style={{ textAlign:"center" }}>
+            <div style={{ fontSize:14, fontWeight:600, color:C.text }}>{monthLabel}</div>
+            {isCurrentMonth && <div style={{ fontSize:10, color:C.accent }}>Current month</div>}
+          </div>
+          <button onClick={()=>navigateMonth(1)}
+            style={{ background:"none", border:"none",
+              color:viewMonthKey>=startOfMonthKey(TODAY).slice(0,7)?C.border:C.muted2,
+              fontSize:22, cursor:"pointer", padding:"2px 8px" }}>›</button>
+        </div>
+
+        {/* Summary row */}
+        <div style={{ display:"flex", gap:8, padding:"12px 20px",
+          borderBottom:`1px solid ${C.border}` }}>
+          {[["green",C.green,"Unused"],["amber",C.amber,"Partial"],["red",C.red,"Maxed"]].map(([s,col,lbl])=>(
+            <div key={s} style={{ flex:1, background:C.card, border:`1px solid ${C.border}`,
+              borderRadius:10, padding:"8px", textAlign:"center" }}>
+              <div style={{ fontSize:20, fontWeight:800, color:col }}>{summary[s]}</div>
+              <div style={{ fontSize:9, color:C.muted, marginTop:2 }}>{lbl}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bookmaker list */}
+        <div style={{ padding:"12px 20px" }}>
+          <div style={base.label}>Tap to update status</div>
+          {BOOKMAKERS.map((b,i)=>{
+            const status = getStatus(b.id, viewMonthKey);
+            const col = statusColor(status);
+            const isExpanded = expandedBookie === b.id;
+            const bMonths = months.slice().reverse();
+
+            return (
+              <div key={b.id} style={{ marginBottom:8 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:12,
+                  background:C.card, border:`1px solid ${C.border}`,
+                  borderRadius: isExpanded ? "10px 10px 0 0" : 10,
+                  padding:"11px 14px" }}>
+                  {/* Status dot — tap to cycle */}
+                  <button onClick={()=>cycleStatus(b.id, viewMonthKey)}
+                    style={{ width:28, height:28, borderRadius:"50%", border:"none",
+                      background:statusBg(status), cursor:"pointer", flexShrink:0,
+                      border:`2px solid ${col}` }}/>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:13, fontWeight:600, color:C.text }}>{b.label}</div>
+                    <div style={{ fontSize:10, color:col, marginTop:1 }}>{statusLabel(status)}</div>
+                  </div>
+                  {/* History toggle */}
+                  <button onClick={()=>setExpandedBookie(isExpanded ? null : b.id)}
+                    style={{ background:"none", border:`1px solid ${C.border}`,
+                      borderRadius:6, padding:"3px 8px", color:C.muted,
+                      fontSize:10, cursor:"pointer" }}>
+                    {isExpanded ? "▲" : "▼"}
+                  </button>
+                </div>
+
+                {/* Expanded history */}
+                {isExpanded && (
+                  <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+                    borderTop:"none", borderRadius:"0 0 10px 10px",
+                    padding:"10px 14px" }}>
+                    <div style={{ fontSize:10, color:C.muted, marginBottom:8,
+                      textTransform:"uppercase", letterSpacing:"0.5px" }}>History</div>
+                    <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                      {bMonths.map(m=>{
+                        const ms = getStatus(b.id, m);
+                        const mc = statusColor(ms);
+                        const ml = parseDate(m+"-01").toLocaleDateString("en-GB",
+                          {month:"short", year:"2-digit"});
+                        return (
+                          <div key={m} style={{ display:"flex", flexDirection:"column",
+                            alignItems:"center", gap:3 }}>
+                            <div style={{ width:20, height:20, borderRadius:"50%",
+                              background:statusBg(ms), border:`2px solid ${mc}` }}/>
+                            <div style={{ fontSize:8, color:C.muted }}>{ml}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </>
+    );
+  };
+
   // ── SAVINGS ───────────────────────────────────────────────────────────────
   const SavingsTab = () => {
     const periods = [
@@ -991,6 +1179,7 @@ function App() {
       {tab==="track"     && <TrackTab/>}
       {tab==="progress"  && <ProgressTab/>}
       {tab==="history"   && <HistoryTab/>}
+      {tab==="accounts"  && <AccountsTab/>}
       {tab==="savings"   && <SavingsTab/>}
       <nav style={base.nav}>
         {NAV_ITEMS.map(({id,label,icon})=>(
