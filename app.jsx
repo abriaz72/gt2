@@ -138,6 +138,7 @@ function App() {
   const [logs, setLogs]             = useState(loadData);
   const [accounts, setAccounts]     = useState(loadAccounts);
   const [tab, setTab]               = useState("dashboard");
+  const [viewMonth, setViewMonth]   = useState(startOfMonthKey(TODAY).slice(0,7));
   const [trackDate, setTrackDate]   = useState(todayKey());
   const [histPeriod, setHistPeriod] = useState("weekly");
   const [setupDone, setSetupDone]   = useState(() => {
@@ -949,7 +950,6 @@ function App() {
 
   // ── ACCOUNTS ──────────────────────────────────────────────────────────────
   const AccountsTab = () => {
-    const [viewMonth, setViewMonth] = useState(startOfMonthKey(TODAY).slice(0,7));
     const [expandedBookie, setExpandedBookie] = useState(null);
 
     function getMonths() {
