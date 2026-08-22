@@ -138,8 +138,6 @@ function App() {
   const [logs, setLogs]             = useState(loadData);
   const [accounts, setAccounts]     = useState(loadAccounts);
   const [tab, setTab]               = useState("dashboard");
-  const [viewMonth, setViewMonth]       = useState(startOfMonthKey(TODAY).slice(0,7));
-  const [expandedBookie, setExpandedBookie] = useState(null);
   const [trackDate, setTrackDate]   = useState(todayKey());
   const [histPeriod, setHistPeriod] = useState("weekly");
   const [setupDone, setSetupDone]   = useState(() => {
@@ -151,6 +149,9 @@ function App() {
   const weekStart  = startOfWeekKey(TODAY);
   const monthStart = startOfMonthKey(TODAY);
   const yearStart  = startOfYearKey(TODAY);
+
+  const [viewMonth, setViewMonth]           = useState(startOfMonthKey(TODAY).slice(0,7));
+  const [expandedBookie, setExpandedBookie] = useState(null);
 
   useEffect(() => { saveData(logs); }, [logs]);
   useEffect(() => { saveAccounts(accounts); }, [accounts]);
