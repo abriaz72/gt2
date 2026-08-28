@@ -612,22 +612,21 @@ function App() {
               const pb     = catPB(cat.id);
               const pct    = Math.min((streak/pb)*100,100);
               const col    = streak===0?C.red:streak>=pb?C.gold:C.green;
-              const isOhf  = cat.id==="ohf";
               return (
                 <div key={cat.id} style={{ paddingBottom:i<CATEGORIES.length-1?10:0,
                   marginBottom:i<CATEGORIES.length-1?10:0,
                   borderBottom:i<CATEGORIES.length-1?`1px solid ${C.border}`:"none" }}>
                   <div style={{ display:"flex", justifyContent:"space-between",
                     alignItems:"baseline", marginBottom:4 }}>
-                    <div style={{ fontSize:12, color:isOhf?C.muted:C.muted2 }}>{cat.label}</div>
-                    <div style={{ fontSize:12, fontWeight:700, color:isOhf?C.muted:col }}>
+                    <div style={{ fontSize:12, color:C.muted2 }}>{cat.label}</div>
+                    <div style={{ fontSize:12, fontWeight:700, color:col }}>
                       {streak}d
-                      {streak>=pb && streak>0 && !isOhf &&
+                      {streak>=pb && streak>0 &&
                         <span style={{ fontSize:9, color:C.gold, marginLeft:3 }}>PB</span>}
                     </div>
                   </div>
                   <div style={{ height:4, background:C.border, borderRadius:2 }}>
-                    <div style={{ height:4, background:isOhf?C.muted:col, borderRadius:2,
+                    <div style={{ height:4, background:col, borderRadius:2,
                       width:`${pct}%`, transition:"width 0.4s ease" }}/>
                   </div>
                 </div>
