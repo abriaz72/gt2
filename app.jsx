@@ -208,17 +208,24 @@ function App() {
   }
 
   function periodStats(from, to) {
-    let gfds=0, gambled=0, urges=0;
+    let gfds=0, gambled=0, urges=0, urgeScore=0, strong=0, moderate=0, minor=0;
     const catsUsed = new Set();
     let d = from > START_DATE ? from : START_DATE;
     while (d <= to && d <= TODAY) {
       const log = logs[d];
       if (log && log.gfd) gfds++;
       else if (log && log.cats && log.cats.length > 0) { gambled++; log.cats.forEach(c=>catsUsed.add(c)); }
-      if (log && log.urge) urges++;
+      if (log && log.urge) {
+        urges++;
+        const s = log.urgeStrength || 0;
+        urgeScore += s;
+        if (s === 3) strong++;
+        else if (s === 2) moderate++;
+        else if (s === 1) minor++;
+      }
       d = addDays(d,1);
     }
-    return { gfds, gambled, catsUsed:[...catsUsed], urges };
+    return { gfds, gambled, catsUsed:[...catsUsed], urges, urgeScore, strong, moderate, minor };
   }
 
   function catSavings(catId, from, to) {
@@ -409,6 +416,33 @@ function App() {
           {/* Triggers */}
           {slog.urge && (
             <>
+              <div style={{ height:1, background:C.border, margin:"4px 0 14px" }}/>
+              <div style={base.label}>Strength of urge</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:7, marginBottom:14 }}>
+                {[
+                  { val:1, label:"1", desc:"Minor",    col:C.green, bg:C.greenDim },
+                  { val:2, label:"2", desc:"Moderate", col:C.amber, bg:C.amberDim },
+                  { val:3, label:"3", desc:"Strong",   col:C.red,   bg:"#450a0a"  },
+                ].map(opt=>{
+                  const active = slog.urgeStrength === opt.val;
+                  return (
+                    <button key={opt.val}
+                      onClick={()=>setLogs(p=>({
+                        ...p, [sk]:{ ...p[sk]||{gfd:false,cats:[],urge:true,triggers:[]},
+                          urgeStrength: active ? null : opt.val }
+                      }))}
+                      style={{ padding:"10px 8px", borderRadius:10,
+                        border:`1px solid ${active?opt.col:C.border}`,
+                        background:active?opt.bg:C.card,
+                        color:active?opt.col:C.muted2,
+                        fontSize:13, fontWeight:active?700:400,
+                        cursor:"pointer", textAlign:"center" }}>
+                      <div style={{ fontWeight:700, fontSize:16 }}>{opt.label}</div>
+                      <div style={{ fontSize:9, marginTop:2, opacity:0.8 }}>{opt.desc}</div>
+                    </button>
+                  );
+                })}
+              </div>
               <div style={base.label}>Triggers</div>
               <div style={{ fontSize:10, color:C.muted, marginBottom:6,
                 textTransform:"uppercase", letterSpacing:"0.5px" }}>Emotional</div>
@@ -770,6 +804,33 @@ function App() {
 
               {tlog.urge && (
                 <>
+                  <div style={{ height:1, background:C.border, margin:"4px 0 14px" }}/>
+                  <div style={base.label}>Strength of urge</div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:7, marginBottom:14 }}>
+                    {[
+                      { val:1, label:"1", desc:"Minor",    col:C.green, bg:C.greenDim },
+                      { val:2, label:"2", desc:"Moderate", col:C.amber, bg:C.amberDim },
+                      { val:3, label:"3", desc:"Strong",   col:C.red,   bg:"#450a0a"  },
+                    ].map(opt=>{
+                      const active = tlog.urgeStrength === opt.val;
+                      return (
+                        <button key={opt.val}
+                          onClick={()=>setLogs(p=>({
+                            ...p, [trackDate]:{ ...p[trackDate]||{gfd:false,cats:[],urge:true,triggers:[]},
+                              urgeStrength: active ? null : opt.val }
+                          }))}
+                          style={{ padding:"10px 8px", borderRadius:10,
+                            border:`1px solid ${active?opt.col:C.border}`,
+                            background:active?opt.bg:C.card,
+                            color:active?opt.col:C.muted2,
+                            fontSize:13, fontWeight:active?700:400,
+                            cursor:"pointer", textAlign:"center" }}>
+                          <div style={{ fontWeight:700, fontSize:16 }}>{opt.label}</div>
+                          <div style={{ fontSize:9, marginTop:2, opacity:0.8 }}>{opt.desc}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
                   <div style={base.label}>Triggers</div>
                   <div style={{ fontSize:10, color:C.muted, marginBottom:6,
                     textTransform:"uppercase", letterSpacing:"0.5px" }}>Emotional</div>
@@ -872,6 +933,22 @@ function App() {
                     <div style={base.statL}>Urge<br/>days</div>
                   </div>
                 </div>
+                {stats.urges > 0 && (
+                  <div style={{ display:"flex", gap:8, marginBottom:10 }}>
+                    {[
+                      { count:stats.strong,   col:C.red,   label:"Strong"   },
+                      { count:stats.moderate, col:C.amber, label:"Moderate" },
+                      { count:stats.minor,    col:C.green, label:"Minor"    },
+                    ].map(s=>(
+                      <div key={s.label} style={{ flex:1, background:C.card,
+                        border:`1px solid ${C.border}`, borderRadius:10,
+                        padding:"7px 6px", textAlign:"center" }}>
+                        <div style={{ fontSize:16, fontWeight:800, color:s.col }}>{s.count}</div>
+                        <div style={{ fontSize:9, color:C.muted, marginTop:1 }}>{s.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div style={base.card}>
                   {CATEGORIES.map((cat,i)=>(
                     <div key={cat.id} style={{ display:"flex", alignItems:"center", padding:"7px 0",
@@ -911,7 +988,7 @@ function App() {
         <div style={{ display:"flex", padding:"7px 20px", background:C.surface,
           borderBottom:`1px solid ${C.border}` }}>
           <div style={{ flex:1, fontSize:9, color:C.muted, textTransform:"uppercase" }}>Period</div>
-          {["GFDs","Gambled","Urges"].map(h=>(
+          {["GFDs","Gambled","Urge score"].map(h=>(
             <div key={h} style={{ width:52, fontSize:9, color:C.muted,
               textTransform:"uppercase", textAlign:"right" }}>{h}</div>
           ))}
@@ -941,7 +1018,7 @@ function App() {
                 color:item.stats.gambled>0?C.red:C.muted }}>{item.stats.gambled}</div>
             </div>
             <div style={{ width:52, textAlign:"right" }}>
-              <div style={{ fontSize:14, fontWeight:700, color:C.purple }}>{item.stats.urges}</div>
+              <div style={{ fontSize:14, fontWeight:700, color:C.purple }}>{item.stats.urgeScore}</div>
             </div>
           </div>
         ))}
