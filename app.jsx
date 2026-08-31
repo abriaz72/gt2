@@ -431,14 +431,14 @@ function App() {
                         ...p, [sk]:{ ...p[sk]||{gfd:false,cats:[],urge:true,triggers:[]},
                           urgeStrength: active ? null : opt.val }
                       }))}
-                      style={{ padding:"10px 8px", borderRadius:10,
+                      style={{ padding:"5px 8px", borderRadius:10,
                         border:`1px solid ${active?opt.col:C.border}`,
                         background:active?opt.bg:C.card,
                         color:active?opt.col:C.muted2,
                         fontSize:13, fontWeight:active?700:400,
                         cursor:"pointer", textAlign:"center" }}>
-                      <div style={{ fontWeight:700, fontSize:16 }}>{opt.label}</div>
-                      <div style={{ fontSize:9, marginTop:2, opacity:0.8 }}>{opt.desc}</div>
+                      <div style={{ fontWeight:700, fontSize:14 }}>{opt.label}</div>
+                      <div style={{ fontSize:9, opacity:0.8 }}>{opt.desc}</div>
                     </button>
                   );
                 })}
@@ -819,14 +819,14 @@ function App() {
                             ...p, [trackDate]:{ ...p[trackDate]||{gfd:false,cats:[],urge:true,triggers:[]},
                               urgeStrength: active ? null : opt.val }
                           }))}
-                          style={{ padding:"10px 8px", borderRadius:10,
+                          style={{ padding:"5px 8px", borderRadius:10,
                             border:`1px solid ${active?opt.col:C.border}`,
                             background:active?opt.bg:C.card,
                             color:active?opt.col:C.muted2,
                             fontSize:13, fontWeight:active?700:400,
                             cursor:"pointer", textAlign:"center" }}>
-                          <div style={{ fontWeight:700, fontSize:16 }}>{opt.label}</div>
-                          <div style={{ fontSize:9, marginTop:2, opacity:0.8 }}>{opt.desc}</div>
+                          <div style={{ fontWeight:700, fontSize:14 }}>{opt.label}</div>
+                          <div style={{ fontSize:9, opacity:0.8 }}>{opt.desc}</div>
                         </button>
                       );
                     })}
