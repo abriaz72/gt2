@@ -802,6 +802,27 @@ function App() {
                 ))}
               </div>
 
+              {/* Notes — always visible once urge is answered */}
+              {tlog.urge !== undefined && tlog.urge !== null && (
+                <>
+                  <div style={base.label}>Notes</div>
+                  <textarea
+                    maxLength={500}
+                    value={localNotes}
+                    onChange={e=>setLocalNotes(e.target.value)}
+                    onBlur={e=>saveNotes(e.target.value)}
+                    placeholder="Add any context or thoughts..."
+                    style={{ width:"100%", minHeight:80, padding:"10px 12px",
+                      background:C.card, border:`1px solid ${C.border}`, borderRadius:10,
+                      color:C.text, fontSize:13, fontFamily:"inherit", resize:"vertical",
+                      outline:"none", lineHeight:1.5 }}
+                  />
+                  <div style={{ fontSize:10, color:C.muted, textAlign:"right", marginTop:4, marginBottom:12 }}>
+                    {localNotes.length} / 500
+                  </div>
+                </>
+              )}
+
               {tlog.urge && (
                 <>
                   <div style={{ height:1, background:C.border, margin:"4px 0 14px" }}/>
@@ -863,24 +884,6 @@ function App() {
                         </button>
                       );
                     })}
-                  </div>
-
-                  {/* Notes */}
-                  <div style={{ height:1, background:C.border, margin:"4px 0 14px" }}/>
-                  <div style={base.label}>Notes</div>
-                  <textarea
-                    maxLength={500}
-                    value={localNotes}
-                    onChange={e=>setLocalNotes(e.target.value)}
-                    onBlur={e=>saveNotes(e.target.value)}
-                    placeholder="Add any context or thoughts..."
-                    style={{ width:"100%", minHeight:100, padding:"10px 12px",
-                      background:C.card, border:`1px solid ${C.border}`, borderRadius:10,
-                      color:C.text, fontSize:13, fontFamily:"inherit", resize:"vertical",
-                      outline:"none", lineHeight:1.5 }}
-                  />
-                  <div style={{ fontSize:10, color:C.muted, textAlign:"right", marginTop:4 }}>
-                    {localNotes.length} / 500
                   </div>
                 </>
               )}
